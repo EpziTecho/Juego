@@ -24,7 +24,7 @@ var estadoPrincipal = {
         // Mostrar pantalla
         fondoJuego = juego.add.tileSprite(0, 0, 370, 768, "fondo");
 
-        nuevo = juego.add.sprite(100, 350, "animacion");
+        nuevo = juego.add.sprite(100, 600, "animacion");
         nuevo.animations.add("movi", [0, 1, 2], 10, true);
 
         botonDisparo = juego.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
@@ -149,9 +149,30 @@ var estadoPrincipal = {
         fadeOutSprite.width = juego.width;
         fadeOutSprite.height = juego.height;
         fadeOutSprite.alpha = 0;
+
+        var text = juego.add.text(
+            juego.world.centerX,
+            juego.world.centerY,
+            "Mision cumplida",
+            {
+                font: "40px Arial",
+                fill: "#ffffff",
+            }
+        );
+        text.anchor.setTo(0.5, 0.5);
+
         var fadeOutTween = juego.add
             .tween(fadeOutSprite)
-            .to({ alpha: 1 }, 500, Phaser.Easing.Linear.None, true);
+            .to({ alpha: 1 }, 1000, Phaser.Easing.Linear.None, true); //parametros
+
+        // Crear temporizador para actualizar el texto del contador
+        var counter = 2;
+        var interval = setInterval(function () {
+            counter--;
+            if (counter >= 0) {
+                text.setText("Game over");
+            }
+        }, 1000); // Cambia cada 500 ms
 
         fadeOutTween.onComplete.add(function () {
             window.location.href = "portada.html"; // Asegúrate de que esta URL es correcta
