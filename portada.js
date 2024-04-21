@@ -81,7 +81,11 @@ document.addEventListener("DOMContentLoaded", function () {
                 juego.world.centerX,
                 juego.world.height - 20,
                 "Diseñado por Sergio Alexander Huayllas ©",
-                { font: "bold 13px Arial", fill: "black" }
+                {
+                    font: "bold 13px Arial",
+                    fill: "black",
+                    backgroundColor: "white",
+                }
             );
             texto.anchor.setTo(0.5);
             var titulo = juego.add.text(

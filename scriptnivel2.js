@@ -23,20 +23,27 @@ var estadoPrincipal = {
     create: function () {
         // Mostrar pantalla
         fondoJuego = juego.add.tileSprite(0, 0, 370, 768, "fondo");
-
+        // Crear animación del personaje principal
         nuevo = juego.add.sprite(100, 600, "animacion");
+        //animacion de movimiento
         nuevo.animations.add("movi", [0, 1, 2], 10, true);
+        //animacion de movimiento a la izquierda
+        nuevo.animations.add("izquierda", [3, 4, 5], 10, true);
+        //animacion de movimiento a la derecha
+        nuevo.animations.add("derecha", [6, 7, 8], 10, true);
 
+        // Crear grupo de balas
         botonDisparo = juego.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
         balas = juego.add.group();
         balas.enableBody = true;
         balas.physicsBodyType = Phaser.Physics.ARCADE;
         balas.createMultiple(20, "laser");
-        balas.setAll("anchor.x", 0.5);
+        balas.setAll("anchor.x", 0);
         balas.setAll("anchor.y", 0.2);
         balas.setAll("outOfBoundsKill", true);
         balas.setAll("checkWorldBounds", true);
 
+        // Crear grupo de enemigos
         enemigos = juego.add.group();
         enemigos.enableBody = true;
         enemigos.physicsBodyType = Phaser.Physics.ARCADE;
@@ -71,7 +78,7 @@ var estadoPrincipal = {
 
         var animacion = juego.add
             .tween(enemigos)
-            .to({ x: 82 }, 300, Phaser.Easing.Linear.None, true, 0, 1000, true); // los parametros son (objetivo, duración, tipo de animación, autoiniciar, delay, repeticiones, yoyo)
+            .to({ x: 82 }, 300, Phaser.Easing.Linear.None, true, 0, 1000, true); // parametros: (objetivo, duración, tipo de animación, autoiniciar, delay, repeticiones, yoyo)
 
         teclaDerecha = juego.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
         teclaIzquierda = juego.input.keyboard.addKey(Phaser.Keyboard.LEFT);
@@ -84,31 +91,59 @@ var estadoPrincipal = {
     update: function () {
         fondoJuego.tilePosition.x -= 1;
 
+        var moving = false; // Rastreo de movimiento del personaje
+
         // Movimiento horizontal del personaje principal
         if (teclaDerecha.isDown && nuevo.x < juego.width - nuevo.width) {
-            // Asegura que no salga por la derecha
+            nuevo.animations.play("derecha");
             nuevo.x++;
-        }
-        if (teclaIzquierda.isDown && nuevo.x > 0) {
-            // Asegura que no salga por la izquierda
+            moving = true; // Está en movimiento
+        } else if (teclaIzquierda.isDown && nuevo.x > 0) {
+            nuevo.animations.play("izquierda");
             nuevo.x--;
+            moving = true; // Está en movimiento
         }
 
         // Movimiento vertical del personaje principal
         if (teclaArriba.isDown && nuevo.y > 0) {
-            // Asegura que no salga por arriba
             nuevo.y--;
-        }
-        if (teclaAbajo.isDown && nuevo.y < juego.height - nuevo.height) {
-            // Asegura que no salga por abajo
+            if (!moving) {
+                // Solo reproducir animación de movi si no se mueve horizontalmente
+                nuevo.animations.play("movi");
+            }
+        } else if (teclaAbajo.isDown && nuevo.y < juego.height - nuevo.height) {
             nuevo.y++;
+            if (!moving) {
+                // Solo reproducir animación de movi si no se mueve horizontalmente
+                nuevo.animations.play("movi");
+            }
         }
 
+        // Si no se están presionando teclas de movimiento, reproducir animación de movi
+        if (
+            !teclaDerecha.isDown &&
+            !teclaIzquierda.isDown &&
+            !teclaArriba.isDown &&
+            !teclaAbajo.isDown
+        ) {
+            nuevo.animations.play("movi");
+        }
         // Disparar
         if (botonDisparo.isDown) {
             this.disparar();
         }
-
+        // Agregar texto de créditos
+        var texto = juego.add.text(
+            juego.world.centerX,
+            juego.world.height - 20,
+            "Diseñado por Sergio Alexander Huayllas ©",
+            {
+                font: "bold 13px Arial",
+                fill: "black",
+                backgroundColor: "white",
+            }
+        );
+        texto.anchor.setTo(0.5);
         // Verificar colisiones entre balas y enemigos
         juego.physics.arcade.overlap(
             balas,
@@ -144,6 +179,7 @@ var estadoPrincipal = {
         }
     },
 
+    // Función para iniciar la transición de fade out
     iniciarFadeOut: function () {
         var fadeOutSprite = juego.add.sprite(0, 0, "fondo");
         fadeOutSprite.width = juego.width;
@@ -163,7 +199,7 @@ var estadoPrincipal = {
 
         var fadeOutTween = juego.add
             .tween(fadeOutSprite)
-            .to({ alpha: 1 }, 1000, Phaser.Easing.Linear.None, true); //parametros
+            .to({ alpha: 1 }, 1500, Phaser.Easing.Linear.None, true); //parametros
 
         // Crear temporizador para actualizar el texto del contador
         var counter = 2;
@@ -175,7 +211,7 @@ var estadoPrincipal = {
         }, 1000); // Cambia cada 500 ms
 
         fadeOutTween.onComplete.add(function () {
-            window.location.href = "portada.html"; // Asegúrate de que esta URL es correcta
+            window.location.href = "portada.html"; // redirigir a la portada
         }, this);
     },
 };
