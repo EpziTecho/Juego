@@ -108,7 +108,7 @@ document.addEventListener("DOMContentLoaded", function () {
             audio.play();
         },
         iniciarJuego: function () {
-            window.location.href = "index.html";
+            window.location.href = "nivel1.html";
         },
         iniciarPlayer1: function () {
             console.log("Iniciar Jugador 1");

@@ -211,7 +211,7 @@ var estadoPrincipal = {
         }, 1000); // Cambia cada 500 ms
 
         fadeOutTween.onComplete.add(function () {
-            window.location.href = "portada.html"; // redirigir a la portada
+            window.location.href = "index.html"; // redirigir a la portada
         }, this);
     },
 };
