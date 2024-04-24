@@ -19,6 +19,7 @@ var estadoPrincipal = {
         juego.load.audio("musica", "audio/audio.mp3");
         juego.load.image("laser", "img/laser.png");
         juego.load.audio("disparo", "audio/laser.mp3");
+        juego.load.audio("explosion", "audio/explosion.mp3");
     },
     create: function () {
         // Mostrar pantalla
@@ -174,6 +175,8 @@ var estadoPrincipal = {
     colision: function (bala, enemigo) {
         bala.kill();
         enemigo.kill();
+        const sonido_explosion = juego.sound.add("explosion");
+        sonido_explosion.play();
         // Comprobar si todos los enemigos han sido eliminados
         if (enemigos.countLiving() === 0) {
             this.iniciarFadeOut();
